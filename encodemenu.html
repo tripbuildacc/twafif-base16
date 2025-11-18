@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Tripweb Tools</title>
+<link rel="icon" type="image/png" href="https://tripweb.page.gd/library/weblogo.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+html{font-size:16px}
+*{-webkit-text-size-adjust:100%;text-size-adjust:100%;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#1e1e1e;color:#fff;margin:0;padding:0}
+header{background:#2a2a2a;border-bottom:1px solid #3d3d3d;color:#ffcc00;text-align:center;font-weight:600;padding:18px 0;position:sticky;top:0;z-index:1000;font-size:1.3rem}
+.container{max-width:720px;margin:30px auto;padding:0 15px;display:grid;gap:20px;grid-template-columns:1fr;}
+.app{background:#2a2a2a;border:1px solid #3d3d3d;border-radius:12px;padding:16px;font-size:.9rem;position:relative;overflow:hidden}
+.app:hover{border-color:#ffcc00}
+.app-title{font-size:1.1rem;font-weight:600;color:#fff}
+.app-desc{font-size:.8rem;color:#bbb;margin:6px 0;line-height:1.4}
+.textarea, .result {
+  width:100%;
+  min-height:120px;
+  resize:vertical;
+  border-radius:8px;
+  border:1px solid #3d3d3d;
+  background:#131313;
+  color:#fff;
+  padding:10px;
+  font-size:0.95rem;
+}
+.btn{background:#ffcc00;color:#111;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:600;margin-top:10px}
+.btn:active{transform:scale(.98)}
+</style>
+</head>
+<body>
+<header>Tripweb Tools</header><div class="container">
+  <div class="app">
+    <div class="app-title">base16 encode menu</div>
+    <div class="app-desc">Enter text to convert into Base16. Result updates in real-time.</div><div class="label-small" style="color:#ffcc00;margin:8px 0 4px;font-size:.85rem">Input text</div>
+<textarea id="inputText" class="textarea" placeholder="Type text here..."></textarea>
+
+<div class="label-small" style="color:#ffcc00;margin:12px 0 4px;font-size:.85rem">Result (Base16)</div>
+<textarea id="resultText" class="result" readonly placeholder="The Base16 result will appear here..."></textarea>
+
+<button class="btn" id="copyBtn">Copy</button>
+<button class="btn small" id="clearBtn">Clear</button>
+
+  </div>
+</div><script>
+function toBase16(str){
+  try{
+    let res = '';
+    const bytes = new TextEncoder().encode(str);
+    for(let b of bytes){ res += b.toString(16).padStart(2,'0'); }
+    return res;
+  }catch(e){ return ''; }
+}
+
+const input = document.getElementById('inputText');
+const result = document.getElementById('resultText');
+const copyBtn = document.getElementById('copyBtn');
+
+function update(){ result.value = toBase16(input.value || ''); }
+input.addEventListener('input', update);
+update();
+
+copyBtn.addEventListener('click', async () => {
+  try{
+    await navigator.clipboard.writeText(result.value);
+    copyBtn.textContent = 'Copied';
+    setTimeout(()=>copyBtn.textContent='Copy',1000);
+  }catch(e){
+    result.select(); document.execCommand('copy');
+    copyBtn.textContent = 'Copied';
+    setTimeout(()=>copyBtn.textContent='Copy',1000);
+  }
+});
+clearBtn.addEventListener('click', () => {
+  input.value = '';
+  update();
+  input.focus();
+});
+
+</script></body>
+</html>
